@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Response, status
 from pydantic import BaseModel
-from .redis_client import operations
+from operations import save_redis, get_redis, exist_redis
 
 from typing import Callable, Dict, Union, Iterable, List
 
@@ -124,14 +124,14 @@ def solve(data: SolutionData) -> float:
 def save_to_cache(orders: List[Order], total: float):
     ids = list(map(get_order_id, orders))
     ids.sort()
-    operations.save_redis(str(ids), total)
+    save_redis(str(ids), total)
 
 
 def retrive_from_cache(orders: List[Order]):
     ids = list(map(get_order_id, orders))
     ids.sort()
-    if operations.exist_redis(str(ids)):
-        return operations.get_redis(str(ids))
+    if exist_redis(str(ids)):
+        return get_redis(str(ids))
 
 
 @app.post("/solution")
