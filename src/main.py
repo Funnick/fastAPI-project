@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Response, status
 from pydantic import BaseModel
-from operations import save_redis, get_redis, exist_redis
+from .operations import save_redis, get_redis, exist_redis
 
 from typing import Callable, Dict, Union, Iterable, List
 
