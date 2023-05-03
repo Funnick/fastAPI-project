@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Response, status
 from pydantic import BaseModel
-from redis_client import operations
+from .redis_client import operations
 
 from typing import Callable, Dict, Union, Iterable, List
 
