@@ -121,30 +121,32 @@ def solve(data: SolutionData) -> float:
     return total
 
 
-def save_to_cache(orders: List[Order], total: float):
-    ids = list(map(get_order_id, orders))
+def save_to_cache(data: SolutionData, total: float):
+    ids = list(map(get_order_id, data.orders))
     ids.sort()
+    ids.append(data.criterion)
     save_redis(str(ids), total)
 
 
-def retrive_from_cache(orders: List[Order]):
-    ids = list(map(get_order_id, orders))
+def retrive_from_cache(data: SolutionData):
+    ids = list(map(get_order_id, data.orders))
     ids.sort()
+    ids.append(data.criterion)
     if exist_redis(str(ids)):
         return get_redis(str(ids))
 
 
 @app.post("/solution")
-async def solution(data: SolutionData, response: Response):
+async def process_orders(data: SolutionData, response: Response):
     validation: Union[Dict[str, str], None] = validate(data)
     if validation:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return validation
 
-    cache_value = retrive_from_cache(data.orders)
+    cache_value = retrive_from_cache(data)
     if cache_value:
         return cache_value
 
     total = solve(data)
-    save_to_cache(data.orders, total)
+    save_to_cache(data, total)
     return total
